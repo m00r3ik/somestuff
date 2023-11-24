@@ -94,7 +94,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999-system-tools.patch"
 
 	# Use whichever python is set by portage
-	#"${FILESDIR}/${PN}-9999-dont-search-for-python.patch"
+	"${FILESDIR}/${PN}-9999-dont-search-for-python.patch"
 
 	# Fix x265 linkage... again again #730034
 	"${FILESDIR}/${PN}-1.3.3-x265-link.patch"
