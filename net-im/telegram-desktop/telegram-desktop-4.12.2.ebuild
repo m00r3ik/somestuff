@@ -25,7 +25,7 @@ REQUIRED_USE="
 KIMAGEFORMATS_RDEPEND="
 	media-libs/libavif:=
 	media-libs/libheif:=
-	media-libs/libjxl
+	>=media-libs/libjxl-0.8.0
 "
 CDEPEND="
 	!net-im/telegram-desktop-bin
@@ -94,13 +94,14 @@ BDEPEND="
 	>=dev-util/cmake-3.16
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
+	wayland? ( dev-util/wayland-scanner )
 "
 # dev-libs/jemalloc:=[-lazy-lock] -> https://bugs.gentoo.org/803233
 
 PATCHES=(
 	"${FILESDIR}/tdesktop-4.2.4-jemalloc-only-telegram-r1.patch"
 	"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
-	"${FILESDIR}/tdesktop-4.10.3-fix-clang-libstdcxx.patch"
+	"${FILESDIR}/tdesktop-4.10.5-qt_compare.patch"
 )
 
 pkg_pretend() {
@@ -124,15 +125,14 @@ src_prepare() {
 			'Q_IMPORT_PLUGIN(QJpegXLPlugin)' \
 			>> cmake/external/qt/qt_static_plugins/qt_static_plugins.cpp || die
 	fi
-
-	# kde-frameworks/kcoreaddons is bundled when using qt6, see:
-	#   cmake/external/kcoreaddons/CMakeLists.txt
+	# kde-frameworks/kcoreaddons is bundled when using qt6.
 
 	# Happily fail if libraries aren't found...
 	find -type f \( -name 'CMakeLists.txt' -o -name '*.cmake' \) \
-		\! -path './cmake/external/expected/CMakeLists.txt' \
-		\! -path './cmake/external/qt/package.cmake' \
 		\! -path './Telegram/lib_webview/CMakeLists.txt' \
+		\! -path './cmake/external/expected/CMakeLists.txt' \
+		\! -path './cmake/external/kcoreaddons/CMakeLists.txt' \
+		\! -path './cmake/external/qt/package.cmake' \
 		-print0 | xargs -0 sed -i \
 		-e '/pkg_check_modules(/s/[^ ]*)/REQUIRED &/' \
 		-e '/find_package(/s/)/ REQUIRED)/' || die
@@ -166,6 +166,8 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt${qt}WaylandClient=$(usex !wayland)
 		## Only used in Telegram/lib_webview/CMakeLists.txt
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt${qt}WaylandCompositor=$(usex !webkit)
+		## KF6CoreAddons is currently unavailable in ::gentoo
+		-DCMAKE_DISABLE_FIND_PACKAGE_KF${qt}CoreAddons=$(usex qt6)
 
 		-DDESKTOP_APP_DISABLE_X11_INTEGRATION=$(usex !X)
 		-DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION=$(usex !wayland)
