@@ -181,7 +181,7 @@ BDEPEND="${COMMON_DEPEND}
 	>=media-libs/libjpeg-turbo-2.0.4:=
 	>=media-libs/libpng-1.6.26:0=
 	virtual/pkgconfig
-	virtual/jre
+	virtual/jre:17
 "
 
 CONFIG_CHECK="~IP_MULTICAST"
