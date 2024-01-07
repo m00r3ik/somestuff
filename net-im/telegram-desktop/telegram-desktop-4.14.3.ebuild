@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{11..12} )
 
 inherit xdg cmake python-any-r1 optfeature flag-o-matic
 
@@ -38,7 +38,7 @@ CDEPEND="
 	dev-libs/protobuf
 	dev-libs/xxhash
 	media-libs/libjpeg-turbo:=
-	~media-libs/libtgvoip-2.4.4_p20221208
+	~media-libs/libtgvoip-2.4.4_p20230929
 	media-libs/openal
 	media-libs/opus
 	media-libs/rnnoise
@@ -83,13 +83,11 @@ RDEPEND="${CDEPEND}
 	webkit? ( net-libs/webkit-gtk:4.1 net-libs/webkit-gtk:6 )
 "
 DEPEND="${CDEPEND}
-	>=dev-cpp/cppgir-0_p20230926
 	>=dev-cpp/ms-gsl-4
 	dev-cpp/range-v3
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-cpp/cppgir-0_p20230926
 	>=dev-util/cmake-3.16
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
@@ -97,7 +95,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
+	#"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
 	"${FILESDIR}/tdesktop-4.10.5-qt_compare.patch"
 )
 

@@ -1,9 +1,9 @@
-# Copyright 2020-2023 Gentoo Authors
+# Copyright 2020-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{11..12} )
 
 inherit xdg cmake python-any-r1 optfeature flag-o-matic
 
@@ -16,7 +16,7 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="BSD GPL-3-with-openssl-exception LGPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~riscv"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv"
 IUSE="dbus enchant +fonts screencast qt6 qt6-imageformats wayland webkit +X"
 REQUIRED_USE="
 	qt6-imageformats? ( qt6 )
@@ -38,7 +38,7 @@ CDEPEND="
 	dev-libs/protobuf
 	dev-libs/xxhash
 	media-libs/libjpeg-turbo:=
-	~media-libs/libtgvoip-2.4.4_p20221208
+	~media-libs/libtgvoip-2.4.4_p20230929
 	media-libs/openal
 	media-libs/opus
 	media-libs/rnnoise
@@ -80,16 +80,14 @@ CDEPEND="
 	)
 "
 RDEPEND="${CDEPEND}
-	webkit? ( net-libs/webkit-gtk:4 )
+	webkit? ( net-libs/webkit-gtk:4.1 net-libs/webkit-gtk:6 )
 "
 DEPEND="${CDEPEND}
-	>=dev-cpp/cppgir-0_p20230926
 	>=dev-cpp/ms-gsl-4
 	dev-cpp/range-v3
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-cpp/cppgir-0_p20230926
 	>=dev-util/cmake-3.16
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
@@ -97,7 +95,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
+	#"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
 	"${FILESDIR}/tdesktop-4.10.5-qt_compare.patch"
 )
 
@@ -146,6 +144,15 @@ src_prepare() {
 }
 
 src_configure() {
+	# Having user paths sneak into the build environment through the
+	# XDG_DATA_DIRS variable causes all sorts of weirdness with cppgir:
+	# - bug 909038: can't read from flatpak directories (fixed upstream)
+	# - bug 920819: system-wide directories ignored when variable is set
+	export XDG_DATA_DIRS="${EPREFIX}/usr/share"
+
+	# Evil flag (bug #919201)
+	filter-flags -fno-delete-null-pointer-checks
+
 	# The ABI of media-libs/tg_owt breaks if the -DNDEBUG flag doesn't keep
 	# the same state across both projects.
 	# See https://bugs.gentoo.org/866055
