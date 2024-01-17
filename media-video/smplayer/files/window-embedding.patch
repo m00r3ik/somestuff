@@ -1,0 +1,13 @@
+diff --git a/src/core.cpp b/src/core.cpp
+index 7dd6b7b6d..13f19884b 100644
+--- a/src/core.cpp
++++ b/src/core.cpp
+@@ -1765,7 +1765,7 @@ void Core::startMplayer( QString file, double seek ) {
+ 		}
+ 		if (proc->isMPV()) {
+ 			if (pref->vo.startsWith("gpu")) {
+-				proc->setOption("gpu-context", "x11egl");
++				proc->setOption("gpu-context", "x11vk");
+ 			}
+ 		}
+ 	}
