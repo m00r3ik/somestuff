@@ -12,6 +12,7 @@ UP_PN="Google Earth Pro"
 
 DESCRIPTION="Explore, search and discover the planet"
 HOMEPAGE="https://earth.google.com"
+#SRC_URI="https://dl.google.com/dl/linux/direct/google-earth-pro-stable_7.3.6_amd64.deb -> ${P}.deb"
 #SRC_URI="https://dl.google.com/dl/linux/direct/${MY_PN}-pro-stable_${PV}_amd64.deb -> ${P}.deb"
 SRC_URI="https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb"
 
