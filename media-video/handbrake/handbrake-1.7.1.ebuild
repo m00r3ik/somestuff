@@ -90,7 +90,7 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	${PYTHON_DEPS}
 	dev-lang/nasm
-	dev-util/cmake
+	dev-build/cmake
 "
 
 src_prepare() {
