@@ -123,7 +123,7 @@ src_install() {
         done
         dosym ../icons/hicolor/256x256/apps/viber.png \
                 /usr/share/pixmaps/viber.png
-
+#
         domenu usr/share/applications/viber.desktop
 
         insinto /opt/viber
