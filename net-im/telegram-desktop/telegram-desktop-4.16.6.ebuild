@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Gentoo Authors
+# Copyright 2020-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -16,7 +16,7 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="BSD GPL-3-with-openssl-exception LGPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~riscv"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv"
 IUSE="dbus enchant +fonts screencast qt6 qt6-imageformats wayland webkit +X"
 REQUIRED_USE="
 	qt6-imageformats? ( qt6 )
@@ -25,7 +25,7 @@ REQUIRED_USE="
 KIMAGEFORMATS_RDEPEND="
 	media-libs/libavif:=
 	media-libs/libheif:=
-	>=media-libs/libjxl-0.8.0
+	>=media-libs/libjxl-0.8.0:=
 "
 CDEPEND="
 	!net-im/telegram-desktop-bin
@@ -38,14 +38,13 @@ CDEPEND="
 	dev-libs/protobuf
 	dev-libs/xxhash
 	media-libs/libjpeg-turbo:=
-	~media-libs/libtgvoip-2.4.4_p20221208
+	~media-libs/libtgvoip-2.4.4_p20230929
 	media-libs/openal
 	media-libs/opus
 	media-libs/rnnoise
 	~media-libs/tg_owt-0_pre20230921:=[screencast=,X=]
 	media-video/ffmpeg:=[opus,vpx]
 	sys-libs/zlib:=[minizip]
-	virtual/opengl
 	!enchant? ( >=app-text/hunspell-1.7:= )
 	enchant? ( app-text/enchant:= )
 	!qt6? (
@@ -80,17 +79,18 @@ CDEPEND="
 	)
 "
 RDEPEND="${CDEPEND}
-	webkit? ( net-libs/webkit-gtk:4 )
+	webkit? ( || ( net-libs/webkit-gtk:4.1 net-libs/webkit-gtk:6 ) )
 "
 DEPEND="${CDEPEND}
-	>=dev-cpp/cppgir-0_p20230926
+	>=dev-cpp/cppgir-2.0_p20240315
 	>=dev-cpp/ms-gsl-4
+	dev-cpp/expected-lite
 	dev-cpp/range-v3
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-cpp/cppgir-0_p20230926
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
+	>=dev-cpp/cppgir-2.0_p20240315
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
 	wayland? ( dev-util/wayland-scanner )
@@ -98,7 +98,6 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
-	"${FILESDIR}/tdesktop-4.10.5-qt_compare.patch"
 )
 
 pkg_pretend() {
@@ -146,6 +145,15 @@ src_prepare() {
 }
 
 src_configure() {
+	# Having user paths sneak into the build environment through the
+	# XDG_DATA_DIRS variable causes all sorts of weirdness with cppgir:
+	# - bug 909038: can't read from flatpak directories (fixed upstream)
+	# - bug 920819: system-wide directories ignored when variable is set
+	export XDG_DATA_DIRS="${EPREFIX}/usr/share"
+
+	# Evil flag (bug #919201)
+	filter-flags -fno-delete-null-pointer-checks
+
 	# The ABI of media-libs/tg_owt breaks if the -DNDEBUG flag doesn't keep
 	# the same state across both projects.
 	# See https://bugs.gentoo.org/866055
@@ -154,6 +162,10 @@ src_configure() {
 	local qt=$(usex qt6 6 5)
 	local mycmakeargs=(
 		-DQT_VERSION_MAJOR=${qt}
+
+		# Override new cmake.eclass defaults (https://bugs.gentoo.org/921939)
+		# Upstream never tests this any other way
+		-DCMAKE_DISABLE_PRECOMPILE_HEADERS=OFF
 
 		# Control automagic dependencies on certain packages
 		## Header-only lib, some git version.
