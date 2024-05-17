@@ -17,7 +17,7 @@ S="${WORKDIR}/${MY_P}"
 LICENSE="BSD GPL-3-with-openssl-exception LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv"
-IUSE="dbus enchant +fonts screencast qt6 qt6-imageformats wayland webkit +X"
+IUSE="dbus enchant +fonts screencast qt6 qt6-imageformats +jemalloc wayland webkit +X"
 REQUIRED_USE="
 	qt6-imageformats? ( qt6 )
 "
@@ -48,6 +48,7 @@ CDEPEND="
 	sys-libs/zlib:=[minizip]
 	!enchant? ( >=app-text/hunspell-1.7:= )
 	enchant? ( app-text/enchant:= )
+	jemalloc? ( dev-libs/jemalloc:= )
 	!qt6? (
 		>=dev-qt/qtcore-5.15:5=
 		>=dev-qt/qtgui-5.15:5=[dbus?,jpeg,png,wayland?,X?]
@@ -58,7 +59,7 @@ CDEPEND="
 		kde-frameworks/kcoreaddons:5
 		webkit? (
 			>=dev-qt/qtdeclarative-5.15:5
-			>=dev-qt/qtwayland-5.15:5
+			>=dev-qt/qtwayland-5.15:5[compositor(+)]
 		)
 	)
 	qt6? (
@@ -67,7 +68,7 @@ CDEPEND="
 		>=dev-qt/qtsvg-6.5:6
 		webkit? (
 			>=dev-qt/qtdeclarative-6.5:6
-			>=dev-qt/qtwayland-6.5:6[compositor]
+			>=dev-qt/qtwayland-6.5:6[compositor,qml]
 		)
 		qt6-imageformats? (
 			>=dev-qt/qtimageformats-6.5:6=
@@ -219,6 +220,13 @@ pkg_postinst() {
 		ewarn "both the 'X' and 'screencast' USE flags are disabled, screen sharing won't work!"
 		ewarn
 	fi
+    if ! use jemalloc && use elibc_glibc; then
+        # https://github.com/telegramdesktop/tdesktop/issues/16084
+        # https://github.com/desktop-app/cmake_helpers/pull/91#issuecomment-881788003
+        ewarn "Disabling USE=jemalloc on glibc systems may cause very high RAM usage!"
+        ewarn "Do NOT report issues about RAM usage without enabling this flag first."
+        ewarn
+    fi
 	if use wayland && ! use qt6; then
 		ewarn "Wayland-specific integrations have been deprecated with Qt5."
 		ewarn "The app will continue to function under wayland, but some"
