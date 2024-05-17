@@ -38,7 +38,7 @@ CDEPEND="
         dev-libs/protobuf
         dev-libs/xxhash
         media-libs/libjpeg-turbo:=
-        ~media-libs/libtgvoip-2.4.4_p20230929
+        ~media-libs/libtgvoip-2.4.4_p20240122
         media-libs/openal
         media-libs/opus
         media-libs/rnnoise
