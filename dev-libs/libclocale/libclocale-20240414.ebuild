@@ -3,16 +3,14 @@
 
 EAPI=8
 
-inherit autotools
-
-DESCRIPTION="Library for cross-platform C notification functions"
-HOMEPAGE="https://github.com/libyal/libcnotify"
-SRC_URI="https://github.com/libyal/libcnotify/releases/download/${PV}/${PN}-beta-${PV}.tar.gz"
+DESCRIPTION="Library for cross-platform C locale functions"
+HOMEPAGE="https://github.com/libyal/libclocale"
+SRC_URI="https://github.com/libyal/libclocale/releases/download/${PV}/${PN}-alpha-${PV}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
 KEYWORDS="amd64 ~arm64 x86"
-IUSE="nls"
+IUSE="nls unicode"
 
 DEPEND="
         dev-libs/libcerror[nls=]
@@ -23,16 +21,12 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-src_prepare() {
-        #makefile was created with 1.16, let's regenerate it
-        eautoreconf
-        eapply_user
-}
-
 src_configure() {
-        econf $(use_enable nls) \
+        econf \
+                $(use_enable nls) \
                 $(use_with nls libiconv-prefix) \
-                $(use_with nls libintl-prefix)
+                $(use_with nls libintl-prefix) \
+                $(use_enable unicode wide-character-type)
 
 #  --disable-shared-libs   disable shared library support
 # not supported in the ebuild at the moment - kind of defeats the entire process

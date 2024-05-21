@@ -5,9 +5,9 @@ EAPI=8
 
 inherit autotools
 
-DESCRIPTION="Library for cross-platform C notification functions"
-HOMEPAGE="https://github.com/libyal/libcnotify"
-SRC_URI="https://github.com/libyal/libcnotify/releases/download/${PV}/${PN}-beta-${PV}.tar.gz"
+DESCRIPTION="Library for cross-platform C threads functions"
+HOMEPAGE="https://github.com/libyal/libcthreads"
+SRC_URI="https://github.com/libyal/libcthreads/releases/download/${PV}/${PN}-alpha-${PV}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
