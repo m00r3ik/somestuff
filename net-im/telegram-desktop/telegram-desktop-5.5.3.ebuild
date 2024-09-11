@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..13} )
 
 inherit xdg cmake python-any-r1 optfeature flag-o-matic
 
@@ -16,8 +16,8 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="BSD GPL-3-with-openssl-exception LGPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv"
-IUSE="dbus enchant +fonts +jemalloc screencast qt6 qt6-imageformats wayland webkit +X"
+KEYWORDS="~amd64"
+IUSE="dbus enchant +fonts +libdispatch +jemalloc screencast qt6 qt6-imageformats wayland webkit +X"
 REQUIRED_USE="
         qt6-imageformats? ( qt6 )
 "
@@ -31,18 +31,19 @@ CDEPEND="
         !net-im/telegram-desktop-bin
         app-arch/lz4:=
         dev-cpp/abseil-cpp:=
+        dev-cpp/ada:=
         >=dev-cpp/glibmm-2.77:2.68
         dev-libs/glib:2
-        dev-libs/libdispatch
         dev-libs/openssl:=
         dev-libs/protobuf
+        libdispatch? ( dev-libs/libdispatch )
         dev-libs/xxhash
         media-libs/libjpeg-turbo:=
-        ~media-libs/libtgvoip-2.4.4_p20240122
+        ~media-libs/libtgvoip-2.4.4_p20240706
         media-libs/openal
         media-libs/opus
         media-libs/rnnoise
-        ~media-libs/tg_owt-0_pre20230921:=[screencast=,X=]
+        ~media-libs/tg_owt-0_pre20240804:=[screencast=,X=]
         media-video/ffmpeg:=[opus,vpx]
         sys-libs/zlib:=[minizip]
         !enchant? ( >=app-text/hunspell-1.7:= )
@@ -98,9 +99,10 @@ BDEPEND="
 "
 
 PATCHES=(
-        "${FILESDIR}/tdesktop-4.2.4-jemalloc-only-telegram-r1.patch"
-        "${FILESDIR}/tdesktop-4.10.0-system-cppgir.patch"
-#        "${FILESDIR}/tdesktop-5.0.1-qt6-no-wayland.patch"
+	"${FILESDIR}"/tdesktop-4.2.4-jemalloc-only-telegram-r1.patch
+	"${FILESDIR}"/tdesktop-4.10.0-system-cppgir.patch
+	"${FILESDIR}"/tdesktop-5.2.2-qt6-no-wayland.patch
+	"${FILESDIR}"/tdesktop-5.2.2-libdispatch.patch
 )
 
 pkg_pretend() {
@@ -164,6 +166,9 @@ src_configure() {
         # See https://bugs.gentoo.org/866055
         append-cppflags '-DNDEBUG'
 
+        # https://github.com/telegramdesktop/tdesktop/issues/17437#issuecomment-1001160398
+        use !libdispatch && append-cppflags -DCRL_FORCE_QT
+
         local qt=$(usex qt6 6 5)
         local mycmakeargs=(
                 -DQT_VERSION_MAJOR=${qt}
@@ -183,6 +188,7 @@ src_configure() {
                 ## KF6CoreAddons is currently unavailable in ::gentoo
                 -DCMAKE_DISABLE_FIND_PACKAGE_KF${qt}CoreAddons=$(usex qt6)
 
+                -DDESKTOP_APP_USE_LIBDISPATCH=$(usex libdispatch)
                 -DDESKTOP_APP_DISABLE_X11_INTEGRATION=$(usex !X)
                 -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION=$(usex !wayland)
                 -DDESKTOP_APP_DISABLE_JEMALLOC=$(usex !jemalloc)
@@ -230,6 +236,12 @@ pkg_postinst() {
                 ewarn "Disabling USE=jemalloc on glibc systems may cause very high RAM usage!"
                 ewarn "Do NOT report issues about RAM usage without enabling this flag first."
                 ewarn
+        fi
+        if ! use libdispatch; then
+        		ewarn "Disabling USE=libdispatch may cause performance degradation"
+        		ewarn "due to fallback to poor QThreadPool! Please see"
+        		ewarn "https://github.com/telegramdesktop/tdesktop/wiki/The-Packaged-Building-Mode"
+        		ewarn
         fi
         if use wayland && ! use qt6; then
                 ewarn "Wayland-specific integrations have been deprecated with Qt5."
