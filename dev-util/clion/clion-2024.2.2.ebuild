@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -15,7 +15,6 @@ SLOT="0"
 VER="$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 RESTRICT="bindist mirror splitdebug"
-IUSE=""
 QA_PREBUILT="opt/${P}/*"
 RDEPEND="
 	dev-libs/libdbusmenu
@@ -42,9 +41,8 @@ src_install() {
 
 	insinto "${dir}"
 	doins -r *
-	fperms 755 "${dir}"/bin/{"${MY_PN}",format,inspect,ltedit,remote-dev-server}.sh
-	fperms 755 "${dir}"/bin/fsnotifier
-
+	fperms 755 "${dir}"/bin/{"${MY_PN}",format,inspect,jetbrains_client,ltedit,remote-dev-server}.sh
+	fperms 755 "${dir}"/bin/{fsnotifier,repair,restarter}
 	fperms 755 "${dir}"/bin/clang/linux/x64/{clangd,clang-tidy,clazy-standalone,llvm-symbolizer}
 	fperms 755 "${dir}"/bin/cmake/linux/x64/bin/{cmake,cpack,ctest}
 	fperms 755 "${dir}"/bin/gdb/linux/x64/bin/{gcore,gdb,gdb-add-index,gdbserver}
@@ -53,6 +51,12 @@ src_install() {
 
 	fperms 755 "${dir}"/jbr/bin/{java,javac,javadoc,jcmd,jdb,jfr,jhsdb,jinfo,jmap,jps,jrunscript,jstack,jstat,keytool,rmiregistry,serialver}
 	fperms 755 "${dir}"/jbr/lib/{chrome-sandbox,jcef_helper,jexec,jspawnhelper}
+
+	fperms 755 "${dir}"/plugins/gateway-plugin/lib/remote-dev-workers/remote-dev-worker-linux-amd64
+#    fperms 755 "${dir}"/plugins/javascript-impl/helpers/package-version-range-matcher/node_modules/semver/bin/semver.js
+    fperms 755 "${dir}"/plugins/python-ce/helpers/{pockets/autolog.py,pycodestyle-2.10.0.py,pycodestyle.py,pydev/pydevd_attach_to_process/linux_and_mac/compile_linux_aarch64.sh,pydev/pydevd_attach_to_process/linux_and_mac/compile_linux.sh,pydev/pydevd_attach_to_process/linux_and_mac/compile_mac.sh,typeshed/scripts/generate_proto_stubs.sh,typeshed/scripts/sync_tensorflow_protobuf_stubs.sh}
+    fperms 755 "${dir}"/plugins/remote-dev-server/{bin/launcher.sh,selfcontained/bin/xkbcomp,selfcontained/bin/Xvfb}
+    fperms 755 "${dir}"/plugins/tailwindcss/server/tailwindcss-language-server
 
 	make_wrapper "${PN}" "${dir}"/bin/"${MY_PN}".sh
 	newicon bin/"${MY_PN}".svg "${PN}".svg
