@@ -1,4 +1,4 @@
-# Copyright 2022 Gentoo Authors
+# Copyright 2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -45,9 +45,10 @@ DEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-plugins-prefix.patch"
+#	"${FILESDIR}/${PN}-plugins-prefix.patch"
 	"${FILESDIR}/${P}-portaudio_sink.patch"
-	"${FILESDIR}/${P}-installdirs.patch"
+#	"${FILESDIR}/${P}-installdirs.patch"
+	"${FILESDIR}/${P}-fix-lib.patch"
 )
 
 src_configure() {
