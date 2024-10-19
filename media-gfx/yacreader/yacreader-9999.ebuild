@@ -22,23 +22,23 @@ SLOT="0"
 IUSE="pdf qrencode"
 
 DEPEND="
-	dev-qt/qtcore:5
-	dev-qt/qtmultimedia:5
-	dev-qt/qtdeclarative:5
-	dev-qt/qtopengl:5
-	dev-qt/qtscript:5
+	dev-qt/qtcore:6
+	dev-qt/qtmultimedia:6
+	dev-qt/qtdeclarative:6
+	dev-qt/qtopengl:6
+	dev-qt/qtscript:6
 	virtual/glu
-	dev-qt/qtquickcontrols:5
-	dev-qt/qtquickcontrols2:5
+	dev-qt/qtquickcontrols:6
+	dev-qt/qtquickcontrols2:6
 	dev-util/desktop-file-utils
 	app-arch/unarr
-	pdf? ( app-text/poppler:=[qt5] )
+	pdf? ( app-text/poppler:=[qt6] )
 	qrencode? ( media-gfx/qrencode:= )
 "
 RDEPEND="${DEPEND}"
 
 src_configure(){
-	eqmake5 YACReader.pro
+	eqmake6 YACReader.pro
 }
 
 src_install(){
