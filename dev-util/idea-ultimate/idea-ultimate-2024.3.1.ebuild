@@ -48,7 +48,7 @@ src_install() {
 	fperms 755 "${dir}"/bin/{"${MY_PN}",format,inspect,jetbrains_client,ltedit,remote-dev-server}.sh
 	fperms 755 "${dir}"/bin/{fsnotifier,remote-dev-server,restarter}
 
-	fperms 755 "${dir}"/jbr/bin/{java,javac,fjavadoc,jcmd,jdb,jfr,jhsdb,jinfo,jmap,jps,jrunscript,jstack,jstat,keytool,rmiregistry,serialver}
+	fperms 755 "${dir}"/jbr/bin/{java,javac,javadoc,jwebserver,jcmd,jdb,jfr,jhsdb,jinfo,jmap,jps,jrunscript,jstack,jstat,keytool,rmiregistry,serialver}
 	fperms 755 "${dir}"/jbr/lib/{chrome-sandbox,jcef_helper,jexec,jspawnhelper}
 
 	fperms 755 "${dir}"/plugins/gateway-plugin/lib/remote-dev-workers/remote-dev-worker-linux-amd64
