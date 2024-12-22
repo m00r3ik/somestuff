@@ -28,7 +28,7 @@ RDEPEND="${DEPEND}"
 src_prepare() {
 	default_src_prepare
 
-	use cli && eapply "${FILESDIR}"/${PN}-cli-tinfo-fix.patch
+	use cli
 }
 
 src_compile() {
