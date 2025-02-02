@@ -194,7 +194,7 @@ CRATES="
 	lazycell-1.3.0
 	libc-0.2.169
 	libdbus-sys-0.2.5
-	libgit2-sys-0.17.0+1.8.1
+	libgit2-sys-0.17.0+1.9.0
 	libloading-0.8.6
 	libnghttp2-sys-0.1.11+1.64.0
 	libredox-0.1.3
