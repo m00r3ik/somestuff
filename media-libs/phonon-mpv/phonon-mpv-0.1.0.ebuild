@@ -16,21 +16,11 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 KEYWORDS="~amd64"
 
-IUSE="+qt5 qt6"
-REQUIRED_USE="|| ( qt5 qt6 )"
 
 DEPEND="
 	>=media-libs/phonon-4.12.0:=
 	>=media-video/mpv-0.29.0:=
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-		dev-qt/qtx11extras:5
-	)
-	qt6? (
-		dev-qt/qtbase:6[gui,opengl,widgets,X]
-	)
+	dev-qt/qtbase:6[gui,opengl,widgets,X]
 "
 RDEPEND="${DEPEND}"
 BDEPEND="
@@ -38,30 +28,15 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-pkg_setup() {
-	MULTIBUILD_VARIANTS=( $(usev qt5) $(usev qt6) )
-}
 
 src_configure() {
-	myconfigure() {
+    append-cppflags -DQT_NO_DEBUG
 		local mycmakeargs=(
-			-DQT_MAJOR_VERSION=${MULTIBUILD_VARIANT/qt/}
-			-DPHONON_BUILD_${MULTIBUILD_VARIANT^^}=ON
-		)
-		if [[ ${MULTIBUILD_VARIANT} == qt6 ]]; then
-			mycmakeargs+=( -DPHONON_BUILD_QT5=OFF )
-		else
-			mycmakeargs+=( -DPHONON_BUILD_QT6=OFF )
-		fi
-		cmake_src_configure
-	}
-	multibuild_foreach_variant myconfigure
-}
-
-src_compile() {
-	multibuild_foreach_variant cmake_src_compile
+		-DPHONON_BUILD_QT5=OFF
+		-DPHONON_BUILD_QT6=ON)
+	cmake_src_configure
 }
 
 src_install() {
-	multibuild_foreach_variant cmake_src_install
+	 cmake_src_install
 }
