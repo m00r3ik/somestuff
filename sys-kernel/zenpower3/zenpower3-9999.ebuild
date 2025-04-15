@@ -9,13 +9,18 @@ DESCRIPTION="Linux kernel driver for reading sensors of AMD Zen family CPUs"
 HOMEPAGE="https://git.exozy.me/a/zenpower3"
 
 inherit git-r3
-EGIT_REPO_URI="https://github.com/PutinVladimir/zenpower3.git"
+EGIT_REPO_URI="https://github.com/koweda/zenpower3.git"
 EGIT_BRANCH="master"
 
 LICENSE="GPL-2"
 SLOT="0"
 
 RDEPEND="!sys-kernel/zenpower"
+
+PATCHES=(
+    "${FILESDIR}/${PN}-compile_with_kernel_under_6_14.patch"
+    "${FILESDIR}/${PN}-use-symlink-to-detect-kernel-version.patch"
+)
 
 CONFIG_CHECK="HWMON PCI AMD_NB ~!SENSORS_K10TEMP"
 
