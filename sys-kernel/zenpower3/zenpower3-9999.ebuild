@@ -9,7 +9,8 @@ DESCRIPTION="Linux kernel driver for reading sensors of AMD Zen family CPUs"
 HOMEPAGE="https://git.exozy.me/a/zenpower3"
 
 inherit git-r3
-EGIT_REPO_URI="https://github.com/koweda/zenpower3.git"
+EGIT_REPO_URI="https://github.com/thor2002ro/zenpower.git"
+#EGIT_REPO_URI="https://github.com/koweda/zenpower3.git"
 EGIT_BRANCH="master"
 
 LICENSE="GPL-2"
@@ -17,22 +18,22 @@ SLOT="0"
 
 RDEPEND="!sys-kernel/zenpower"
 
-PATCHES=(
-    "${FILESDIR}/${PN}-compile_with_kernel_under_6_14.patch"
-    "${FILESDIR}/${PN}-use-symlink-to-detect-kernel-version.patch"
-)
+#PATCHES=(
+#    "${FILESDIR}/${PN}-compile_with_kernel_under_6_14.patch"
+#    "${FILESDIR}/${PN}-use-symlink-to-detect-kernel-version.patch"
+#)
 
 CONFIG_CHECK="HWMON PCI AMD_NB ~!SENSORS_K10TEMP"
 
 src_prepare() {
-	# Set kernel build dir
-	sed -i "s@^KERNEL_BUILD.*@KERNEL_BUILD := ${KV_DIR}@" "${S}/Makefile" || die "Could not fix build path"
+        # Set kernel build dir
+        sed -i "s@^KERNEL_BUILD.*@KERNEL_BUILD := ${KV_DIR}@" "${S}/Makefile" || die "Could not fix build path"
 
-	default
+        default
 }
 
 src_compile() {
-	local modlist=( zenpower=misc:"${S}" )
+        local modlist=( zenpower=misc:"${S}" )
 
-	linux-mod-r1_src_compile
+        linux-mod-r1_src_compile
 }
