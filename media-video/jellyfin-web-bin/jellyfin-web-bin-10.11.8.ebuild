@@ -20,7 +20,7 @@ RDEPEND="
 	!media-video/jellyfin-web-jmp-bin
 "
 
-S="${WORKDIR}/jellyfin-web_${PV}"
+S="${WORKDIR}/jellyfin"
 
 src_install() {
 	insinto /usr/share/jellyfinmediaplayer/web-client/desktop
